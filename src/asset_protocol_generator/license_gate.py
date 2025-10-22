@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 # Beispiel-URL (anpassen): https://example.com/asset-protocol-gate.json
 GATE_URL = os.environ.get(
     "APG_GATE_URL",
-    "https://example.com/asset-protocol-gate.json",
+    "https://raw.githubusercontent.com/nichtkarim/Protokolle360V/main/asset-protocol-gate.json",
 )
 
 #
