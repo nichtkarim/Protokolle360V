@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; color: #111; }
+    header { display:flex; justify-content: space-between; align-items: center; }
+    h1 { font-size: 20px; margin: 0 0 8px; }
+    .meta { font-size: 12px; color:#333; }
+    table { width:100%; border-collapse: collapse; margin-top:16px; }
+    th, td { border:1px solid #ccc; padding:8px; font-size: 12px; }
+    th { background:#f6f7f9; text-align:left; }
+    .section { margin-top: 16px; }
+    .sign { height: 64px; border-bottom: 1px solid #999; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+  .row { display:flex; gap:16px; align-items:center; }
+  .logo-main { height:56px; object-fit:contain; }
+  .box-text { white-space:pre-wrap; border:1px solid #ddd; padding:8px; min-height:64px; }
+  .sig-img { height:100%; object-fit:contain; }
+    /* Print-friendly pagination */
+    .page-break { page-break-before: always; break-before: page; }
+    .avoid-break { page-break-inside: avoid; break-inside: avoid; }
+    @media print {
+      header { page-break-after: avoid; }
+      .signature-grid { page-break-inside: avoid; }
+    }
+
+  /* Agreement styling (compact to fit on one page) */
+  .agreement { font-size: 11px; line-height: 1.35; }
+  .agreement h2 { font-size: 14px; margin: 0 0 6px; }
+  .agreement h3 { font-size: 12px; margin: 10px 0 4px; }
+  .agreement .meta { font-size: 11px; }
+  .agreement .section { margin-top: 10px; }
+  .agreement .list { margin: 6px 0; padding-left: 18px; }
+  .agreement .list li { margin: 2px 0; }
+  .agreement .sign { height: 44px; }
+  /* Card layout */
+  .card { border: 1px solid #e2e5ea; border-radius: 6px; background: #fff; }
+  .card-titlebar { display:flex; align-items:center; gap:12px; background:#f6f7f9; border-bottom:1px solid #e2e5ea; padding:8px 12px; }
+  .card-titlebar .logo { height: 40px; object-fit: contain; }
+  .card-body { padding: 12px; }
+  .agreement .addresses { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .agreement .signature-grid { gap: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="row">
+      {% if logo_b64 %}
+      <img src="data:image/png;base64,{{ logo_b64 }}" alt="Logo" class="logo-main">
+      {% endif %}
+      <div>
+        <h1>{{ title }}</h1>
+        <div class="meta">
+          Datum: {{ date }}<br>
+          Vorgang: {{ mode }}
+        </div>
+      </div>
+    </div>
+    <div class="meta">
+      Mitarbeiter: {{ employee.name }}<br>
+      Abteilung: {{ employee.department }}<br>
+      Standort: {{ employee.location }}
+    </div>
+  </header>
+
+  <div class="section">
+    <strong>Gegenstände</strong>
+    <table>
+      <thead>
+        <tr>
+          <th>Bezeichnung</th>
+          <th>Seriennummer</th>
+          <th>Zustand</th>
+          <th>Bemerkung</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ item.serial }}</td>
+          <td>{{ item.condition }}</td>
+          <td>{{ item.note }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section grid">
+    <div>
+      <strong>Hinweise</strong>
+  <div class="box-text">{{ notes }}</div>
+    </div>
+    <div>
+      <strong>Rückgabe-Zustand / Auflagen</strong>
+  <div class="box-text">{{ return_requirements }}</div>
+    </div>
+  </div>
+
+  <div class="section grid">
+    <div>
+      <strong>Übergebende Person</strong>
+      <div class="sign">
+        {% if sig_giver_b64 %}
+          <img src="data:image/png;base64,{{ sig_giver_b64 }}" alt="Unterschrift Übergebende" class="sig-img">
+        {% endif %}
+      </div>
+  <div class="meta">Übergebende Person: {{ giver_name }} — Datum: {{ date }}</div>
+    </div>
+    <div>
+      <strong>Empfangende Person</strong>
+      <div class="sign">
+        {% if sig_receiver_b64 %}
+          <img src="data:image/png;base64,{{ sig_receiver_b64 }}" alt="Unterschrift Empfangende" class="sig-img">
+        {% endif %}
+      </div>
+  <div class="meta">Empfangende Person: {{ receiver_name }} — Datum: {{ date }}</div>
+    </div>
+  </div>
+
+  {% if include_agreement %}
+  <div class="section agreement page-break">
+    <div class="card avoid-break">
+      <div class="card-titlebar">
+        {% if logo_b64 %}
+        <img class="logo" src="data:image/png;base64,{{ logo_b64 }}" alt="Logo">
+        {% endif %}
+        <div>
+          <h2>Vereinbarung über die Überlassung eines Dienstgerätes</h2>
+          <div class="meta">vom {{ date }}</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="addresses">
+          <div>
+            <strong>zwischen</strong><br>
+            360Volt GmbH<br>
+            Voßbusch 16b<br>
+            45133 Essen
+          </div>
+          <div>
+            <strong>und</strong><br>
+            {{ employee.name | default('VORNAME NACHNAME') }}<br>
+            {{ emp_street | default('STRAßE') }}<br>
+            {{ emp_city | default('PLZ ORT') }}
+          </div>
+        </div>
+
+        <div class="section clause">
+          <h3>§ 1 Überlassung des Geräts</h3>
+          <p>Der Arbeitgeber überlässt dem Arbeitnehmer für die Dauer des Beschäftigungsverhältnisses folgende Dienstgeräte (z. B. Mobiltelefon oder Laptop) – nachfolgend jeweils „Gerät“ genannt. Die Geräte dienen ausschließlich geschäftlichen Zwecken und dürfen nicht privat genutzt werden.</p>
+          <p><strong>Auflistung der überlassenen Geräte:</strong></p>
+          <ul class="list">
+            <template>{% if items and items|length > 0 %}</template>
+            <template>{% for it in items %}</template>
+            <li>Modell: {{ it.name or '-' }}, Seriennummer: {{ it.serial or '-' }}</li>
+            <template>{% endfor %}</template>
+            <template>{% else %}</template>
+            <li>(keine Geräte erfasst)</li>
+            <template>{% endif %}</template>
+          </ul>
+        </div>
+
+        <div class="section clause">
+          <h3>§ 2 Verbot der privaten Nutzung</h3>
+          <p>Die private Nutzung des Geräts, insbesondere für Anrufe, Nachrichten, Downloads von Apps, Spielen etc., ist ausdrücklich untersagt. Sollte dennoch eine private Nutzung stattfinden, haftet der Arbeitnehmer für dadurch entstandene zusätzliche Kosten, wie z. B. Downloadgebühren, Abonnements oder erhöhte Datenkosten.</p>
+        </div>
+
+        <div class="section clause">
+          <h3>§ 3 Rückgabepflicht</h3>
+          <p>Der Arbeitnehmer verpflichtet sich, das Gerät bei Beendigung des Arbeitsverhältnisses oder auf Aufforderung des Arbeitgebers unverzüglich und in funktionsfähigem Zustand zurückzugeben.</p>
+        </div>
+
+        <div class="section clause">
+          <h3>§ 4 Haftung bei Beschädigung oder Verlust</h3>
+          <p>Der Arbeitnehmer ist verpflichtet, das Gerät sorgfältig zu behandeln. Im Falle von fahrlässiger Beschädigung oder Verlust haftet der Arbeitnehmer für die anfallenden Kosten für Reparatur oder Ersatz.</p>
+        </div>
+
+        <div class="section clause">
+          <h3>§ 5 Datenschutz und Sicherheit</h3>
+          <p>Der Arbeitnehmer verpflichtet sich, die auf dem Gerät installierten Sicherheitsvorkehrungen zu beachten und keine unbefugten Apps oder Software zu installieren. Sämtliche geschäftlichen Daten sind vertraulich zu behandeln.</p>
+        </div>
+
+        <div class="section clause">
+          <h3>§ 6 Kostenübernahme bei Fehlverhalten</h3>
+          <p>Sollte durch eine private Nutzung des Geräts, entgegen der Bestimmungen dieser Vereinbarung, zusätzliche Kosten entstehen, wird der Arbeitnehmer diese Kosten vollständig tragen.</p>
+        </div>
+
+        <div class="section clause">
+          <h3>§ 7 Geräteverwaltung</h3>
+          <p>Das Gerät wird zentral von der IT-Abteilung des Arbeitgebers verwaltet und gemanaged. Der Arbeitgeber behält sich das Recht vor, jederzeit Remote-Zugriff auf das Gerät zu nehmen, um Sicherheitsupdates, notwendige Apps oder Einstellungen zu installieren und zu verwalten.</p>
+        </div>
+
+        <div class="section clause">
+          <h3>§ 8 Schlussbestimmungen</h3>
+          <p>(1) Nebenabreden zu diesem Vertrag und Änderungen des Vertrages bedürfen zu ihrer Wirksamkeit der Schriftform. Dies gilt auch für eine Änderung dieser Schriftformklausel.</p>
+          <p>(2) Die im Betrieb ggf. geltenden Betriebsvereinbarungen sind zu beachten und anzuwenden.</p>
+          <p>(3) Die Unwirksamkeit einzelner Vertragsbestimmungen lässt die Wirksamkeit des übrigen Vertrages unberührt.</p>
+        </div>
+
+        <div class="grid signature-grid section avoid-break">
+          <div>
+            Essen, {{ date }}<br>
+            360Volt GmbH
+            <div class="sign"></div>
+            <div class="meta">Malte Westphal – Head of IT &amp; Product</div>
+          </div>
+          <div>
+            Bochum, {{ date }}<br>
+            {{ employee.name | default('NAME NACHNAME des Mitarbeiter') }}
+            <div class="sign"></div>
+            <div class="meta">Unterschrift Mitarbeiter</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</body>
+</html>

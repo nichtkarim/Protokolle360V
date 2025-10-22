@@ -1,0 +1,108 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Asset Protocol Generator",
+			"type": "shell",
+			"command": ".\\.venv\\Scripts\\Activate.ps1; python -m src.asset_protocol_generator.main",
+			"problemMatcher": []
+		},
+		{
+			"label": "Install Python deps",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				". .\\\\.venv\\\\Scripts\\\\Activate.ps1 2>$null; if (!(Test-Path .venv)) { python -m venv .venv }; . .\\\\.venv\\\\Scripts\\\\Activate.ps1; pip install --disable-pip-version-check -r requirements.txt"
+			],
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run App",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				". .\\\\.venv\\\\Scripts\\\\Activate.ps1; python -m src.asset_protocol_generator.main"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Install Python deps",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				". .\\\\.venv\\\\Scripts\\\\Activate.ps1 2>$null; if (!(Test-Path .venv)) { python -m venv .venv }; . .\\\\.venv\\\\Scripts\\\\Activate.ps1; pip install --disable-pip-version-check -r requirements.txt"
+			],
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run App",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				". .\\\\.venv\\\\Scripts\\\\Activate.ps1; python -m src.asset_protocol_generator.main"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Run App",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				". .\\\\.venv\\\\Scripts\\\\Activate.ps1; python -m src.asset_protocol_generator.main"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Run App",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				". .\\\\.venv\\\\Scripts\\\\Activate.ps1; python -m src.asset_protocol_generator.main"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Run App",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				". .\\\\.venv\\\\Scripts\\\\Activate.ps1; python -m src.asset_protocol_generator.main"
+			],
+			"problemMatcher": []
+		}
+	]
+}
