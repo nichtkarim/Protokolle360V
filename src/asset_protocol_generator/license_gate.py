@@ -3,15 +3,16 @@ from __future__ import annotations
 import json
 import os
 import urllib.request
+import time
+from urllib.parse import urlparse, urlunparse, urlencode, parse_qsl
 from pathlib import Path
-from urllib.parse import urlparse
 
 
 # Externe Steuerung per URL oder Dateipfad; per Env überschreibbar
 # Beispiel-URL (anpassen): https://example.com/asset-protocol-gate.json
 GATE_URL = os.environ.get(
     "APG_GATE_URL",
-    "https://raw.githubusercontent.com/nichtkarim/Protokolle360V/main/asset-protocol-gate.json",
+    "https://raw.githubusercontent.com/nichtkarim/Protokolle360V/refs/heads/main/asset-protocol-gate.json",
 )
 
 #
@@ -25,11 +26,30 @@ def _read_local_file(path: str) -> str | None:
         return None
 
 
+def _add_cache_buster(u: str) -> str:
+    try:
+        parts = urlparse(u)
+        # Für RAW GitHub Inhalte Cache umgehen
+        if parts.netloc == "raw.githubusercontent.com":
+            q = dict(parse_qsl(parts.query, keep_blank_values=True))
+            q["cb"] = str(int(time.time()))
+            new_query = urlencode(q)
+            return urlunparse((parts.scheme, parts.netloc, parts.path, parts.params, new_query, parts.fragment))
+        return u
+    except Exception:
+        return u
+
+
 def _fetch_http(url: str, timeout: float) -> str | None:
     try:
+        url2 = _add_cache_buster(url)
         req = urllib.request.Request(
-            url,
-            headers={"User-Agent": "asset-protocol-gui/1.0"},
+            url2,
+            headers={
+                "User-Agent": "asset-protocol-gui/1.0",
+                "Cache-Control": "no-cache",
+                "Pragma": "no-cache",
+            },
         )
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             if getattr(resp, "status", 200) != 200:
